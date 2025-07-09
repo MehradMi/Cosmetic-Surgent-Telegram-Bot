@@ -309,11 +309,10 @@ async def search_celebrity_image(update: Update, context: ContextTypes.DEFAULT_T
                     lang="fa"
                     
                 celebrity_image_url = get_celebrity_image_url(celebrity["name"], lang)
-                #caption_reasons = celebrity["reasons"]
                 caption_reasons = "\n".join(f"• {reason}" for reason in celebrity["reasons"])
                 celebrity_image_url_dict[celebrity["name"]] = celebrity_image_url
                 await send_images_side_by_side(update, context, user_image_path, celebrity_image_url, 
-                                               user_photo_file_id, celebrity["name"],caption_reasons)
+                                               user_photo_file_id, celebrity["name"], celebrity["name"], caption_reasons)
             except Exception as e:
                 pass
         
@@ -332,7 +331,7 @@ async def search_celebrity_image(update: Update, context: ContextTypes.DEFAULT_T
 
 # --- Bot Function: Send Back User & Celebrity Images --- #
 async def send_images_side_by_side(update: Update, context: ContextTypes.DEFAULT_TYPE, user_image_path, celebrity_or_target_image_url, 
-                                   user_photo_file_id, celebrity_name_or_file_id, caption_reasons):
+                                   user_photo_file_id, celebrity_name_or_file_id, target_name="شخص مورد نظر", caption_reasons):
     try:
         # Step 1: Load user photo from file
         user_image = Image.open(user_image_path).convert("RGB")
@@ -376,7 +375,7 @@ async def send_images_side_by_side(update: Update, context: ContextTypes.DEFAULT
         await context.bot.send_photo(
             chat_id=update.effective_chat.id,
             photo=open(combined_path, "rb"),
-            caption=f"👥 چهره شما vs {celebrity_name_or_file_id} \n {caption_reasons}"
+            caption=f"👥 سمت چپ چهره شما \n سمت راست چهره {target_name} \n {caption_reasons}"
         )
         # ----------------------------
 
@@ -604,7 +603,7 @@ async def give_surgery_suggestions(update: Update, context: ContextTypes.DEFAULT
         celebrity_image_url = context.user_data['celebrity_image_urls'].get(celeb_name)
         #suggestions = surgery_suggestions(user_image_path, celebrity_image_url)
         suggestions = await asyncio.to_thread(surgery_suggestions, user_image_path, celebrity_image_url)
-        await send_images_side_by_side(update, context, user_image_path, celebrity_image_url, user_photo_file_id, celeb_name, caption)
+        await send_images_side_by_side(update, context, user_image_path, celebrity_image_url, user_photo_file_id, celeb_name, celeb_name, caption)
     else:
         target_photo_file_id = context.user_data['user_target_photo']
         user_target_image_path = f"{TARGET_PERSON_PICTURES_DIR}/{target_photo_file_id}_{TELEGRAM_BOT_ID}.jpg" 

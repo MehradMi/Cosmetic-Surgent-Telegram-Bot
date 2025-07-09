@@ -331,7 +331,7 @@ async def search_celebrity_image(update: Update, context: ContextTypes.DEFAULT_T
 
 # --- Bot Function: Send Back User & Celebrity Images --- #
 async def send_images_side_by_side(update: Update, context: ContextTypes.DEFAULT_TYPE, user_image_path, celebrity_or_target_image_url, 
-                                   user_photo_file_id, celebrity_name_or_file_id, target_name="شخص مورد نظر", caption_reasons):
+                                   user_photo_file_id, celebrity_name_or_file_id, target_name, caption_reasons):
     try:
         # Step 1: Load user photo from file
         user_image = Image.open(user_image_path).convert("RGB")
@@ -609,7 +609,7 @@ async def give_surgery_suggestions(update: Update, context: ContextTypes.DEFAULT
         user_target_image_path = f"{TARGET_PERSON_PICTURES_DIR}/{target_photo_file_id}_{TELEGRAM_BOT_ID}.jpg" 
         #suggestions = surgery_suggestions(user_image_path, user_target_image_path)
         suggestions = await asyncio.to_thread(surgery_suggestions, user_image_path, user_target_image_path)
-        await send_images_side_by_side(update, context, user_image_path, user_target_image_path, user_photo_file_id,target_photo_file_id, caption)
+        await send_images_side_by_side(update, context, user_image_path, user_target_image_path, user_photo_file_id,target_photo_file_id, "شخص مورد نظر", caption)
     # ----------------------------    
     
     # Send Suggestions To The User
